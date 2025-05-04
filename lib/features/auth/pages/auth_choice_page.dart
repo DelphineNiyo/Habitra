@@ -10,13 +10,13 @@ class AuthChoicePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              AppColors.primary,
-              AppColors.primaryVariant,
+              Color(0xFF033f63), // deep blue
+              Color(0xFF28666e), // teal blue
             ],
           ),
         ),
@@ -27,10 +27,17 @@ class AuthChoicePage extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(
-                    Icons.self_improvement,
-                    size: 100,
-                    color: Colors.white,
+                  Container(
+                    decoration: const BoxDecoration(
+                      color: Color(0xFF7c9885), // sage green accent
+                      shape: BoxShape.circle,
+                    ),
+                    padding: const EdgeInsets.all(24),
+                    child: const Icon(
+                      Icons.self_improvement,
+                      size: 80,
+                      color: Colors.white,
+                    ),
                   ),
                   const SizedBox(height: 24),
                   Text(
@@ -44,7 +51,7 @@ class AuthChoicePage extends StatelessWidget {
                   Text(
                     'Start your journey to better habits',
                     style: AppText.titleMedium.copyWith(
-                      color: Colors.white.withOpacity(0.8),
+                      color: Colors.white.withOpacity(0.85),
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -57,7 +64,8 @@ class AuthChoicePage extends StatelessWidget {
                         'Login',
                         Icons.login,
                         Routes.login,
-                        AppColors.primary,
+                        const Color(0xFFFEDC97), // soft yellow
+                        const Color(0xFF033f63), // deep blue text
                       ),
                       const SizedBox(width: 16),
                       _buildAuthButton(
@@ -65,7 +73,8 @@ class AuthChoicePage extends StatelessWidget {
                         'Register',
                         Icons.person_add,
                         Routes.signup,
-                        AppColors.secondary,
+                        const Color(0xFFb5b682), // olive
+                        const Color(0xFF033f63), // deep blue text
                       ),
                     ],
                   ),
@@ -84,6 +93,7 @@ class AuthChoicePage extends StatelessWidget {
     IconData icon,
     String route,
     Color color,
+    Color textColor,
   ) {
     return ElevatedButton(
       onPressed: () {
@@ -91,22 +101,24 @@ class AuthChoicePage extends StatelessWidget {
       },
       style: ElevatedButton.styleFrom(
         backgroundColor: color,
-        foregroundColor: Colors.white,
+        foregroundColor: textColor,
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8),
         ),
+        elevation: 0,
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 20),
+          Icon(icon, size: 20, color: textColor),
           const SizedBox(width: 8),
           Text(
             text,
             style: AppText.button.copyWith(
-              color: Colors.white,
+              color: textColor,
               fontSize: 14,
+              fontWeight: FontWeight.bold,
             ),
           ),
         ],

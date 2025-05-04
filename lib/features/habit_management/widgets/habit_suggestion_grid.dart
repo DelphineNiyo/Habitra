@@ -75,11 +75,12 @@ class HabitSuggestionGrid extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const Icon(Icons.add),
-                const SizedBox(width: 8),
+                const SizedBox(width: 4),
                 Text(
-                  'Create Custom Habit',
+                  'Customize a Habit',
                   style: AppText.titleMedium.copyWith(
                     fontWeight: FontWeight.bold,
+                    color: AppColors.onPrimary
                   ),
                 ),
               ],

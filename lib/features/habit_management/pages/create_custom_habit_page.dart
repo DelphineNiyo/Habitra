@@ -79,7 +79,7 @@ class _CreateCustomHabitPageState extends State<CreateCustomHabitPage> {
       appBar: AppBar(
         title: Text(widget.suggestion != null
             ? 'Customize ${widget.suggestion!.title}'
-            : 'Create Custom Habit'),
+            : 'Customize a Habit'),
         backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
         leading: IconButton(
@@ -269,7 +269,7 @@ class _CreateCustomHabitPageState extends State<CreateCustomHabitPage> {
                   ),
                 ),
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: 34),
               Center(
                 child: ElevatedButton(
                   onPressed: _handleSave,

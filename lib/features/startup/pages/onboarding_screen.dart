@@ -62,57 +62,70 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.primary,
-      body: SafeArea(
-        child: Column(
-          children: [
-            Align(
-              alignment: Alignment.topRight,
-              child: TextButton(
-                onPressed: _skipOnboarding,
-                child: Text(
-                  'Skip',
-                  style: AppText.button.copyWith(
-                    color: Colors.white.withOpacity(0.8),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color(0xFF033f63), // deep blue
+              Color(0xFF28666e), // teal blue
+            ],
+          ),
+        ),
+        child: SafeArea(
+          child: Column(
+            children: [
+              Align(
+                alignment: Alignment.topRight,
+                child: TextButton(
+                  onPressed: _skipOnboarding,
+                  child: Text(
+                    'Skip',
+                    style: AppText.button.copyWith(
+                      color: Colors.white.withOpacity(0.8),
+                    ),
                   ),
                 ),
               ),
-            ),
-            Expanded(
-              child: PageView.builder(
-                controller: _pageController,
-                onPageChanged: _onPageChanged,
-                itemCount: _pages.length,
-                itemBuilder: (context, index) {
-                  return _buildPage(_pages[index]);
-                },
-              ),
-            ),
-            _buildPageIndicator(),
-            Padding(
-              padding: const EdgeInsets.all(24.0),
-              child: ElevatedButton(
-                onPressed: _nextPage,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  foregroundColor: AppColors.primary,
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 16,
-                    horizontal: 32,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                child: Text(
-                  _currentPage == _pages.length - 1 ? 'Get Started' : 'Next',
-                  style: AppText.button.copyWith(
-                    color: AppColors.primary,
-                  ),
+              Expanded(
+                child: PageView.builder(
+                  controller: _pageController,
+                  onPageChanged: _onPageChanged,
+                  itemCount: _pages.length,
+                  itemBuilder: (context, index) {
+                    return _buildPage(_pages[index]);
+                  },
                 ),
               ),
-            ),
-          ],
+              _buildPageIndicator(),
+              Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: ElevatedButton(
+                  onPressed: _nextPage,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFFFEDC97), // soft yellow
+                    foregroundColor: const Color(0xFF033f63), // deep blue text
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 16,
+                      horizontal: 32,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    elevation: 0,
+                  ),
+                  child: Text(
+                    _currentPage == _pages.length - 1 ? 'Get Started' : 'Next',
+                    style: AppText.button.copyWith(
+                      color: const Color(0xFF033f63),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -124,10 +137,17 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            page.icon,
-            size: 100,
-            color: Colors.white,
+          Container(
+            decoration: BoxDecoration(
+              color: const Color(0xFF7c9885), // sage green accent
+              shape: BoxShape.circle,
+            ),
+            padding: const EdgeInsets.all(24),
+            child: Icon(
+              page.icon,
+              size: 80,
+              color: Colors.white,
+            ),
           ),
           const SizedBox(height: 32),
           Text(
@@ -142,7 +162,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           Text(
             page.description,
             style: AppText.titleMedium.copyWith(
-              color: Colors.white.withOpacity(0.8),
+              color: Colors.white.withOpacity(0.85),
             ),
             textAlign: TextAlign.center,
           ),
@@ -157,13 +177,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       children: List.generate(
         _pages.length,
         (index) => Container(
-          width: 8,
-          height: 8,
+          width: 10,
+          height: 10,
           margin: const EdgeInsets.symmetric(horizontal: 4),
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             color: _currentPage == index
-                ? Colors.white
+                ? const Color(0xFF7c9885) // sage green
                 : Colors.white.withOpacity(0.3),
           ),
         ),

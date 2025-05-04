@@ -186,33 +186,6 @@ class _HomePageState extends State<HomePage> {
               },
             ),
           ),
-          // Centered Customize a Habit button
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16.0),
-            child: Center(
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, Routes.createCustomHabit);
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF6C00FF), // vivid purple
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  elevation: 0,
-                ),
-                child: const Text(
-                  'Customize a Habit',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 22,
-                  ),
-                ),
-              ),
-            ),
-          ),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
