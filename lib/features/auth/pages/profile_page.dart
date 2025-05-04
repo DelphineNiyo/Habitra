@@ -13,6 +13,7 @@ class ProfilePage extends StatelessWidget {
         title: const Text('My Profile'),
         backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
+        automaticallyImplyLeading: false,
         actions: [
           IconButton(
             icon: const Icon(Icons.settings),
