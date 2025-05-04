@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../app/colors.dart';
+import '../../../core/constants/app_colors.dart';
 import '../../../app/text.dart';
 import '../../../app/routes.dart';
 import '../../habit_management/widgets/habit_suggestion_grid.dart';
@@ -64,9 +64,9 @@ class _HomePageState extends State<HomePage> {
           value: 'account_settings',
           child: Row(
             children: [
-              const Icon(Icons.person_outline, size: 20),
+              const Icon(Icons.person_outline, size: 20, color: AppColors.textPrimary),
               const SizedBox(width: 12),
-              const Text('Account Settings'),
+              const Text('Account Settings', style: TextStyle(color: AppColors.textPrimary)),
             ],
           ),
         ),
@@ -74,9 +74,9 @@ class _HomePageState extends State<HomePage> {
           value: 'app_settings',
           child: Row(
             children: [
-              const Icon(Icons.settings_outlined, size: 20),
+              const Icon(Icons.settings_outlined, size: 20, color: AppColors.textPrimary),
               const SizedBox(width: 12),
-              const Text('App Settings'),
+              const Text('App Settings', style: TextStyle(color: AppColors.textPrimary)),
             ],
           ),
         ),
@@ -85,13 +85,14 @@ class _HomePageState extends State<HomePage> {
           value: 'logout',
           child: Row(
             children: [
-              const Icon(Icons.logout, size: 20),
+              const Icon(Icons.logout, size: 20, color: AppColors.textPrimary),
               const SizedBox(width: 12),
-              const Text('Logout'),
+              const Text('Logout', style: TextStyle(color: AppColors.textPrimary)),
             ],
           ),
         ),
       ],
+      color: AppColors.surface,
     ).then((value) {
       if (value == null) return;
       
@@ -113,19 +114,20 @@ class _HomePageState extends State<HomePage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Logout'),
-        content: const Text('Are you sure you want to logout?'),
+        backgroundColor: AppColors.surface,
+        title: const Text('Logout', style: TextStyle(color: AppColors.textPrimary)),
+        content: const Text('Are you sure you want to logout?', style: TextStyle(color: AppColors.textSecondary)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: const Text('Cancel', style: TextStyle(color: AppColors.primary)),
           ),
           TextButton(
             onPressed: () {
               Navigator.pop(context);
               Navigator.pushReplacementNamed(context, Routes.onboarding);
             },
-            child: const Text('Logout'),
+            child: const Text('Logout', style: TextStyle(color: AppColors.primary)),
           ),
         ],
       ),
@@ -156,43 +158,76 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.surface,
       appBar: AppBar(
         title: const Text('Habitra'),
         backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
+        elevation: 4,
         actions: [
           IconButton(
-            icon: const Icon(Icons.person),
+            icon: const Icon(Icons.person, color: Colors.white),
             onPressed: _showProfileMenu,
           ),
         ],
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Text(
-              'Suggested Habits',
-              style: AppText.heading2.copyWith(
-                color: AppColors.textPrimary,
+      body: Container(
+        color: AppColors.surface,
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Text(
+                'Suggested Habits',
+                style: AppText.heading2.copyWith(
+                  color: AppColors.textPrimary,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
-          ),
-          Expanded(
-            child: HabitSuggestionGrid(
-              onHabitSelected: _handleHabitSelected,
-              onCreateCustomHabit: () {
-                Navigator.pushNamed(context, Routes.createCustomHabit);
-              },
+            Expanded(
+              child: HabitSuggestionGrid(
+                onHabitSelected: _handleHabitSelected,
+                onCreateCustomHabit: () {
+                  Navigator.pushNamed(context, Routes.createCustomHabit);
+                },
+              ),
             ),
-          ),
-        ],
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16.0),
+              child: Center(
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, Routes.createCustomHabit);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    elevation: 0,
+                  ),
+                  child: const Text(
+                    'Customize a Habit',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
+        backgroundColor: AppColors.surface,
         currentIndex: _selectedIndex,
         selectedItemColor: AppColors.primary,
-        unselectedItemColor: Colors.grey,
+        unselectedItemColor: AppColors.textSecondary,
         onTap: _onItemTapped,
         items: const [
           BottomNavigationBarItem(

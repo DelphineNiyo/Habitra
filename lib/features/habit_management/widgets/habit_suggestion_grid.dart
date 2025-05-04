@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../app/colors.dart';
+import '../../../core/constants/app_colors.dart';
 import '../../../app/text.dart';
 import '../models/habit_suggestion.dart';
 
@@ -38,56 +38,22 @@ class HabitSuggestionGrid extends StatelessWidget {
       ),
     ];
 
-    return Column(
-      children: [
-        Expanded(
-          child: GridView.builder(
-            padding: const EdgeInsets.all(16),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              childAspectRatio: 1.0,
-              crossAxisSpacing: 16,
-              mainAxisSpacing: 16,
-            ),
-            itemCount: suggestions.length,
-            itemBuilder: (context, index) {
-              final suggestion = suggestions[index];
-              return _HabitSuggestionCard(
-                suggestion: suggestion,
-                onTap: () => onHabitSelected(suggestion),
-              );
-            },
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: ElevatedButton(
-            onPressed: onCreateCustomHabit,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primary,
-              foregroundColor: AppColors.onPrimary,
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(Icons.add),
-                const SizedBox(width: 4),
-                Text(
-                  'Customize a Habit',
-                  style: AppText.titleMedium.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.onPrimary
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
+    return GridView.builder(
+      padding: const EdgeInsets.all(16),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        childAspectRatio: 1.0,
+        crossAxisSpacing: 16,
+        mainAxisSpacing: 16,
+      ),
+      itemCount: suggestions.length,
+      itemBuilder: (context, index) {
+        final suggestion = suggestions[index];
+        return _HabitSuggestionCard(
+          suggestion: suggestion,
+          onTap: () => onHabitSelected(suggestion),
+        );
+      },
     );
   }
 }
@@ -104,6 +70,7 @@ class _HabitSuggestionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      color: AppColors.surface,
       elevation: 4,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
@@ -126,6 +93,7 @@ class _HabitSuggestionCard extends StatelessWidget {
                 suggestion.title,
                 style: AppText.titleMedium.copyWith(
                   fontWeight: FontWeight.bold,
+                  color: AppColors.textPrimary,
                 ),
                 textAlign: TextAlign.center,
               ),
