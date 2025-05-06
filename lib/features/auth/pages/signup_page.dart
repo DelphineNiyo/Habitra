@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../app/routes.dart';
 import '../../../services/auth_service.dart';
+import '../../../services/api_service.dart'; // Needed to insert extra profile data
 
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
@@ -12,6 +13,8 @@ class SignupPage extends StatefulWidget {
 class _SignupPageState extends State<SignupPage> {
   final _formKey = GlobalKey<FormState>();
   final _auth = AuthService();
+  final _api = ApiService();
+
   String _firstName = '', _lastName = '', _username = '', _email = '', _password = '';
   bool _loading = false;
 
@@ -19,22 +22,24 @@ class _SignupPageState extends State<SignupPage> {
     if (!_formKey.currentState!.validate()) return;
     _formKey.currentState!.save();
 
-    // Log the data being sent
-    print('Submitting registration...');
-    print('First Name: $_firstName');
-    print('Last Name: $_lastName');
-    print('Username: $_username');
-    print('Email: $_email');
-    print('Password: $_password');  // Avoid logging real passwords in production!
-
     setState(() => _loading = true);
 
     try {
-      // Call the register method
-      await _auth.register(_firstName, _lastName, _username, _email, _password);
+      // Create user account
+      final response = await _auth.signUp(email: _email, password: _password);
 
-      // Log success
-      print('Registration successful! User created.');
+      final userId = response.user?.id;
+
+      if (userId == null) throw Exception("Signup failed. No user ID returned.");
+
+      // Insert additional profile data into Supabase `users` table
+      // await _api.insertUserProfile(
+      //   userId: userId,
+      //   firstName: _firstName,
+      //   lastName: _lastName,
+      //   username: _username,
+      //   email: _email,
+      // );
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -43,12 +48,8 @@ class _SignupPageState extends State<SignupPage> {
         ),
       );
 
-      // Navigate to the login page
       Navigator.pushReplacementNamed(context, Routes.login);
     } catch (e) {
-      // Log the error
-      print('Registration failed: ${e.toString()}');
-
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Registration failed: ${e.toString()}'),

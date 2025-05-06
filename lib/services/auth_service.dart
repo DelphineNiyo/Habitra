@@ -1,50 +1,64 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/user.dart';
 import 'api_service.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AuthService {
-  final ApiService _api = ApiService();
+  static final SupabaseClient _supabase = Supabase.instance.client;
 
-  /// Registers a new user via register.php
-  Future<User> register(
-    String firstName,
-    String lastName,
-    String username,
-    String email,
-    String password,
-  ) async {
-    final data = await _api.post('register.php', {
-      'firstName': firstName,
-      'lastName': lastName,
-      'username': username,
-      'email': email,
-      'password': password,
-    });
-    final user = User.fromJson(data);
-    await _saveUser(user);
-    return user;
+  // Sign up a new user
+  Future<AuthResponse> signUp({
+    required String email,
+    required String password,
+  }) async {
+    final response = await _supabase.auth.signUp(
+      email: email,
+      password: password,
+    );
+    return response;
   }
 
-  /// Logs in an existing user via login_user.php
-  Future<User> login(String email, String password) async {
-    final data = await _api.post('login_user.php', {
-      'email': email,
-      'password': password,
-    });
-    final user = User.fromJson(data);
-    await _saveUser(user);
-    return user;
+  // Sign in existing user
+  Future<AuthResponse> signIn({
+    required String email,
+    required String password,
+  }) async {
+    final response = await _supabase.auth.signInWithPassword(
+      email: email,
+      password: password,
+    );
+    return response;
   }
 
-  Future<void> _saveUser(User u) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt('user_id', u.id);
-    await prefs.setString('username', u.username);
-    await prefs.setString('email', u.email);
+  // Sign out the current user
+  Future<void> signOut() async {
+    await _supabase.auth.signOut();
   }
 
-  Future<void> logout() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.clear();
+  // Reset password via email
+  Future<void> resetPassword({required String email}) async {
+    await _supabase.auth.resetPasswordForEmail(email);
   }
+
+  // Check if user is signed in
+  bool isSignedIn() {
+    return _supabase.auth.currentUser != null;
+  }
+
+  // Get current user's ID
+  String? getCurrentUserId() {
+    return _supabase.auth.currentUser?.id;
+  }
+
+  // Get current user's email
+  String? getCurrentUserEmail() {
+    return _supabase.auth.currentUser?.email;
+  }
+
+  // Refresh session manually if needed
+  Future<void> refreshSession() async {
+    await _supabase.auth.refreshSession();
+  }
+
+  login(String trim, String trim2) {}
 }

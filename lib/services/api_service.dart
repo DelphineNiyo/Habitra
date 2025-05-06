@@ -3,58 +3,87 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 // Only imported on Web:
 import 'dart:html' as html;
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ApiService {
-  late final String baseUrl;
+  static final SupabaseClient supabase = Supabase.instance.client;
 
-  ApiService() {
-    if (kIsWeb) {
-      // On Web use the host the page was served from (ignores dev port)
-      final host = html.window.location.hostname;
-      baseUrl = 'http://$host/habitra_api/api';
-    } else {
-      // Android emulator → 10.0.2.2, iOS & desktop → localhost
-      final host = defaultTargetPlatform == TargetPlatform.android
-          ? '10.0.2.2'
-          : '127.0.0.1';
-      baseUrl = 'http://$host/habitra_api/api';
-    }
+  // HABITS CRUD
+  Future<List<dynamic>> getHabits() async {
+    final userId = supabase.auth.currentUser?.id;
+    final response = await supabase
+        .from('habits')
+        .select()
+        .eq('user_id', userId)
+        .order('created_at');
+    return response;
   }
 
-  void _ensureSuccess(http.Response res) {
-    if (res.statusCode < 200 || res.statusCode >= 300) {
-      final jsonBody = res.body.isNotEmpty ? jsonDecode(res.body) : {};
-      throw Exception(jsonBody['error'] ?? 'HTTP ${res.statusCode}');
-    }
+  Future<void> addHabit(Map<String, dynamic> habitData) async {
+    final userId = supabase.auth.currentUser?.id;
+    habitData['user_id'] = userId;
+    await supabase.from('habits').insert(habitData);
   }
 
-  Future<Map<String, dynamic>> get(String fileName) async {
-    final uri = Uri.parse('$baseUrl/$fileName');
-    final res = await http.get(uri);
-    _ensureSuccess(res);
-    return jsonDecode(res.body) as Map<String, dynamic>;
+  Future<void> updateHabit(int habitId, Map<String, dynamic> updates) async {
+    await supabase.from('habits').update(updates).eq('id', habitId);
   }
 
-  Future<Map<String, dynamic>> post(
-      String fileName, Map<String, dynamic> body) async {
-    final uri = Uri.parse('$baseUrl/$fileName');
-    final res = await http.post(
-      uri,
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(body),
-    );
-    _ensureSuccess(res);
-    return jsonDecode(res.body) as Map<String, dynamic>;
+  Future<void> deleteHabit(int habitId) async {
+    await supabase.from('habits').delete().eq('id', habitId);
   }
 
-  Future<Map<String, dynamic>> put(
-          String fileName, Map<String, dynamic> body) =>
-      post(fileName, body);
-
-  Future<Map<String, dynamic>> delete(String fileName) async {
-    final uri = Uri.parse('$baseUrl/$fileName');
-    final res = await http.delete(uri);
-    _ensureSuccess(res);
-    return jsonDecode(res.body) as Map<String, dynamic>;
+  // HABIT LOGS
+  Future<void> logHabitCompletion(int habitId, {String? notes}) async {
+    await supabase.from('habit_logs').insert({
+      'habit_id': habitId,
+      'notes': notes ?? '',
+    });
   }
+
+  Future<List<dynamic>> getHabitLogs(int habitId) async {
+    final response = await supabase
+        .from('habit_logs')
+        .select()
+        .eq('habit_id', habitId)
+        .order('completed_at', ascending: false);
+    return response;
+  }
+
+  // CATEGORIES
+  Future<List<dynamic>> getCategories() async {
+    final userId = supabase.auth.currentUser?.id;
+    final response = await supabase
+        .from('categories')
+        .select()
+        .eq('user_id', userId)
+        .order('name');
+    return response;
+  }
+
+  Future<void> addCategory(Map<String, dynamic> categoryData) async {
+    final userId = supabase.auth.currentUser?.id;
+    categoryData['user_id'] = userId;
+    await supabase.from('categories').insert(categoryData);
+  }
+
+  Future<void> deleteCategory(int categoryId) async {
+    await supabase.from('categories').delete().eq('id', categoryId);
+  }
+
+  // AUTH HELPERS
+  Future<void> signIn(String email, String password) async {
+    await supabase.auth.signInWithPassword(email: email, password: password);
+  }
+
+  Future<void> signUp(String email, String password) async {
+    await supabase.auth.signUp(email: email, password: password);
+  }
+
+  Future<void> signOut() async {
+    await supabase.auth.signOut();
+  }
+
+  insertUserProfile({required String userId, required String firstName, required String lastName, required String username, required String email}) {}
+  
 }

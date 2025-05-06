@@ -44,14 +44,14 @@ class _HomePageState extends State<HomePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Dana',
+                'Delph',
                 style: AppText.bodyLarge.copyWith(
                   color: AppColors.textPrimary,
                 ),
               ),
               const SizedBox(height: 4),
               Text(
-                'dana@example.com',
+                'delphn@gm.cm',
                 style: AppText.bodySmall.copyWith(
                   color: AppColors.textSecondary,
                 ),

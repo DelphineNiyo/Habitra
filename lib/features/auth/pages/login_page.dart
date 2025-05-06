@@ -37,20 +37,19 @@ class _LoginPageState extends State<LoginPage> {
         _passCtrl.text.trim(),
       );
 
-      // on success
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Welcome back!'),
           backgroundColor: Colors.green,
         ),
       );
+
       Navigator.pushReplacementNamed(context, Routes.home);
     } catch (e) {
-      // strip “Exception: ” prefix if present
-      final msg = e.toString().replaceFirst('Exception: ', '').trim();
+      final error = e.toString().replaceFirst('Exception: ', '').trim();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(msg.isNotEmpty ? msg : 'Login failed'),
+          content: Text(error.isNotEmpty ? error : 'Login failed. Please try again.'),
           backgroundColor: Colors.red,
         ),
       );
@@ -74,7 +73,6 @@ class _LoginPageState extends State<LoginPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-
               // Headings
               Text('Welcome Back',
                   style: AppText.heading2.copyWith(color: AppColors.textPrimary)),
@@ -83,7 +81,7 @@ class _LoginPageState extends State<LoginPage> {
                   style: AppText.bodyLarge.copyWith(color: AppColors.textSecondary)),
               const SizedBox(height: 32),
 
-              // Email
+              // Email Field
               TextFormField(
                 controller: _emailCtrl,
                 decoration: const InputDecoration(
@@ -99,9 +97,10 @@ class _LoginPageState extends State<LoginPage> {
               ),
               const SizedBox(height: 16),
 
-              // Password
+              // Password Field
               TextFormField(
                 controller: _passCtrl,
+                obscureText: !_isPasswordVisible,
                 decoration: InputDecoration(
                   labelText: 'Password',
                   prefixIcon: const Icon(Icons.lock_outline),
@@ -113,7 +112,6 @@ class _LoginPageState extends State<LoginPage> {
                         setState(() => _isPasswordVisible = !_isPasswordVisible),
                   ),
                 ),
-                obscureText: !_isPasswordVisible,
                 validator: (v) =>
                     (v == null || v.isEmpty) ? 'Please enter your password' : null,
               ),
@@ -130,7 +128,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
               const SizedBox(height: 24),
 
-              // Submit button or loader
+              // Login Button
               _loading
                   ? const Center(child: CircularProgressIndicator())
                   : ElevatedButton(
@@ -139,7 +137,15 @@ class _LoginPageState extends State<LoginPage> {
                         backgroundColor: AppColors.primary,
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8)),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ).copyWith(
+                        elevation: MaterialStateProperty.all(5),
+                        backgroundColor: MaterialStateProperty.all(AppColors.primary),
+                        foregroundColor: MaterialStateProperty.all(Colors.white),
+                        textStyle: MaterialStateProperty.all(
+                          const TextStyle(color: Colors.white),
+                        ),
                       ),
                       child: const Text('Sign In'),
                     ),
@@ -159,7 +165,6 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ],
               ),
-
             ],
           ),
         ),
