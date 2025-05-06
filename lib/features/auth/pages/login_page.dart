@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../app/colors.dart';
 import '../../../app/text.dart';
 import '../../../app/routes.dart';
+import '../../../services/auth_service.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -12,20 +13,49 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
+  final _emailCtrl = TextEditingController();
+  final _passCtrl = TextEditingController();
   bool _isPasswordVisible = false;
+  bool _loading = false;
+
+  final _auth = AuthService();
 
   @override
   void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
+    _emailCtrl.dispose();
+    _passCtrl.dispose();
     super.dispose();
   }
 
-  void _handleLogin() {
-    if (_formKey.currentState!.validate()) {
+  Future<void> _handleLogin() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    setState(() => _loading = true);
+    try {
+      await _auth.login(
+        _emailCtrl.text.trim(),
+        _passCtrl.text.trim(),
+      );
+
+      // on success
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Welcome back!'),
+          backgroundColor: Colors.green,
+        ),
+      );
       Navigator.pushReplacementNamed(context, Routes.home);
+    } catch (e) {
+      // strip “Exception: ” prefix if present
+      final msg = e.toString().replaceFirst('Exception: ', '').trim();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(msg.isNotEmpty ? msg : 'Login failed'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } finally {
+      setState(() => _loading = false);
     }
   }
 
@@ -38,118 +68,102 @@ class _LoginPageState extends State<LoginPage> {
         foregroundColor: Colors.white,
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24.0),
+        padding: const EdgeInsets.all(24),
         child: Form(
           key: _formKey,
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text(
-                'Welcome Back',
-                style: AppText.heading2.copyWith(
-                  color: AppColors.textPrimary,
-                ),
-              ),
+
+              // Headings
+              Text('Welcome Back',
+                  style: AppText.heading2.copyWith(color: AppColors.textPrimary)),
               const SizedBox(height: 8),
-              Text(
-                'Sign in to continue',
-                style: AppText.bodyLarge.copyWith(
-                  color: AppColors.textSecondary,
-                ),
-              ),
+              Text('Sign in to continue',
+                  style: AppText.bodyLarge.copyWith(color: AppColors.textSecondary)),
               const SizedBox(height: 32),
+
+              // Email
               TextFormField(
-                controller: _emailController,
+                controller: _emailCtrl,
                 decoration: const InputDecoration(
                   labelText: 'Email',
                   prefixIcon: Icon(Icons.email_outlined),
                 ),
                 keyboardType: TextInputType.emailAddress,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your email';
-                  }
-                  if (!value.contains('@')) {
-                    return 'Please enter a valid email';
-                  }
+                validator: (v) {
+                  if (v == null || v.isEmpty) return 'Please enter your email';
+                  if (!v.contains('@')) return 'Enter a valid email';
                   return null;
                 },
               ),
               const SizedBox(height: 16),
+
+              // Password
               TextFormField(
-                controller: _passwordController,
+                controller: _passCtrl,
                 decoration: InputDecoration(
                   labelText: 'Password',
                   prefixIcon: const Icon(Icons.lock_outline),
                   suffixIcon: IconButton(
-                    icon: Icon(
-                      _isPasswordVisible
-                          ? Icons.visibility_off
-                          : Icons.visibility,
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        _isPasswordVisible = !_isPasswordVisible;
-                      });
-                    },
+                    icon: Icon(_isPasswordVisible
+                        ? Icons.visibility_off
+                        : Icons.visibility),
+                    onPressed: () =>
+                        setState(() => _isPasswordVisible = !_isPasswordVisible),
                   ),
                 ),
                 obscureText: !_isPasswordVisible,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your password';
-                  }
-                  return null;
-                },
+                validator: (v) =>
+                    (v == null || v.isEmpty) ? 'Please enter your password' : null,
               ),
               const SizedBox(height: 8),
+
+              // Forgot password
               Align(
                 alignment: Alignment.centerRight,
                 child: TextButton(
-                  onPressed: () {
-                    Navigator.pushNamed(context, Routes.forgotPassword);
-                  },
+                  onPressed: () =>
+                      Navigator.pushNamed(context, Routes.forgotPassword),
                   child: const Text('Forgot Password?'),
                 ),
               ),
               const SizedBox(height: 24),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _handleLogin,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+
+              // Submit button or loader
+              _loading
+                  ? const Center(child: CircularProgressIndicator())
+                  : ElevatedButton(
+                      onPressed: _handleLogin,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primary,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8)),
+                      ),
+                      child: const Text('Sign In'),
                     ),
-                  ),
-                  child: const Text('Sign In'),
-                ),
-              ),
               const SizedBox(height: 16),
+
+              // Sign up link
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    'Don\'t have an account?',
-                    style: AppText.bodyMedium.copyWith(
-                      color: AppColors.textSecondary,
-                    ),
-                  ),
+                  Text("Don't have an account?",
+                      style: AppText.bodyMedium
+                          .copyWith(color: AppColors.textSecondary)),
                   TextButton(
-                    onPressed: () {
-                      Navigator.pushReplacementNamed(context, Routes.signup);
-                    },
+                    onPressed: () =>
+                        Navigator.pushReplacementNamed(context, Routes.signup),
                     child: const Text('Sign Up'),
                   ),
                 ],
               ),
+
             ],
           ),
         ),
       ),
     );
   }
-} 
+}
