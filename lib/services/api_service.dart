@@ -8,6 +8,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 class ApiService {
   static final SupabaseClient supabase = Supabase.instance.client;
 
+  
+
   // HABITS CRUD
   Future<List<dynamic>> getHabits() async {
     final userId = supabase.auth.currentUser?.id;
@@ -86,4 +88,8 @@ class ApiService {
 
   insertUserProfile({required String userId, required String firstName, required String lastName, required String username, required String email}) {}
   
+
+  User ?currentuser = supabase.auth.currentUser;
+
 }
+

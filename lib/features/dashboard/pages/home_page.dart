@@ -95,7 +95,7 @@ class _HomePageState extends State<HomePage> {
       color: AppColors.surface,
     ).then((value) {
       if (value == null) return;
-      
+
       switch (value) {
         case 'account_settings':
           Navigator.pushNamed(context, Routes.accountSettings);
@@ -150,6 +150,9 @@ class _HomePageState extends State<HomePage> {
         Navigator.pushReplacementNamed(context, Routes.progress);
         break;
       case 3:
+        Navigator.pushNamed(context, Routes.profile); // New profile route
+        break;
+      case 4:
         Navigator.pushReplacementNamed(context, Routes.appSettings);
         break;
     }
@@ -161,6 +164,7 @@ class _HomePageState extends State<HomePage> {
       backgroundColor: AppColors.surface,
       appBar: AppBar(
         title: const Text('Habitra'),
+        automaticallyImplyLeading: false, // Back icon removed here
         backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
         elevation: 4,
@@ -243,6 +247,10 @@ class _HomePageState extends State<HomePage> {
             label: 'Progress',
           ),
           BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Profile',
+          ),
+          BottomNavigationBarItem(
             icon: Icon(Icons.settings),
             label: 'Settings',
           ),
@@ -309,4 +317,4 @@ class _HomePageState extends State<HomePage> {
       color: Colors.cyan,
     ),
   ];
-} 
+}

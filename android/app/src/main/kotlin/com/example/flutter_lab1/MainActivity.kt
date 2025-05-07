@@ -1,4 +1,4 @@
-package com.example.habitra_final
+package com.example.flutter_lab1
 
 import io.flutter.embedding.android.FlutterActivity
 

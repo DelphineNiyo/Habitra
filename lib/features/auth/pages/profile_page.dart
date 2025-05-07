@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:habitra_final/services/api_service.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../app/colors.dart';
 import '../../../app/text.dart';
 import '../../../app/routes.dart';
@@ -8,12 +10,18 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+   
     return Scaffold(
       appBar: AppBar(
-        title: const Text('My Profile'),
+        title: const Center(child: Text('My Profile')),
         backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
-        automaticallyImplyLeading: false,
+        leading: IconButton(
+          icon: const Icon(Icons.home),
+          onPressed: () {
+            Navigator.pushReplacementNamed(context, Routes.home);
+          },
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.settings),
@@ -42,44 +50,53 @@ class ProfilePage extends StatelessWidget {
   }
 
   Widget _buildProfileHeader() {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Row(
-          children: [
-            const CircleAvatar(
-              radius: 40,
-              backgroundColor: AppColors.primary,
-              child: Icon(
-                Icons.person,
-                size: 40,
-                color: Colors.white,
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Dana Shimirwa',
-                    style: AppText.heading3.copyWith(
-                      color: AppColors.textPrimary,
-                    ),
+
+    final supabase_service = ApiService();
+    final currentuser = supabase_service.currentuser;
+    return FutureBuilder<User?>(
+      future: Future.value(Supabase.instance.client.auth.currentUser),
+      builder: (context, snapshot) {
+        final user = snapshot.data;
+        return Card(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              children: [
+                const CircleAvatar(
+                  radius: 40,
+                  backgroundColor: AppColors.primary,
+                  child: Icon(
+                    Icons.person,
+                    size: 40,
+                    color: Colors.white,
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'danan@gmail.com',
-                    style: AppText.bodyMedium.copyWith(
-                      color: AppColors.textSecondary,
-                    ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        currentuser?.email ?? 'Delphine Niyo',
+                        style: AppText.heading3.copyWith(
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        user?.email ?? 'shimirwadelphine@gmail.com',
+                        style: AppText.bodyMedium.copyWith(
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 
@@ -164,4 +181,4 @@ class ProfilePage extends StatelessWidget {
       ),
     );
   }
-} 
+}

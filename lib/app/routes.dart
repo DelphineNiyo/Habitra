@@ -33,6 +33,8 @@ class Routes {
   static const String editHabit = '/edit-habit';
   static const String progress = '/progress';
 
+  //static String challenges;
+
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case splash:
